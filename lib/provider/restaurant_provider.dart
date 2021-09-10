@@ -156,7 +156,7 @@ class RestaurantProvider extends ChangeNotifier {
     return isConnected;
   }
 
-  Future<void> submitReview(String id) async{
-   await apiService.requestReview(name, review, id);
+  Future<void> submitReview(String id) async {
+    await apiService.requestReview(name, review, id);
   }
 }
