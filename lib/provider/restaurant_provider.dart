@@ -6,21 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:restaurant_app_submission_1/model/restaurant.dart';
 import 'package:restaurant_app_submission_1/model/review.dart';
 import 'package:restaurant_app_submission_1/service/api_service.dart';
-
-enum ResultState {
-  Loading,
-  NoData,
-  HasData,
-  Error,
-  DetailLoading,
-  DetailNoData,
-  DetailHasData,
-  DetailError,
-}
+import 'package:restaurant_app_submission_1/service/sqlite_service.dart';
+import 'package:restaurant_app_submission_1/utils/result_state.dart';
+import 'package:sqflite/sqflite.dart';
 
 class RestaurantProvider extends ChangeNotifier {
   final Connectivity _connectivity = new Connectivity();
   final ApiService apiService;
+  final SQLiteService sqLiteService = SQLiteService();
   RestaurantResult? _restaurantsResult;
   String _message = '', _filter = '', _review = '', _name = '';
   ResultState? _state;
@@ -84,10 +77,12 @@ class RestaurantProvider extends ChangeNotifier {
     }
   }
 
-  Future<dynamic> getRestaurantDetailData(String id) async {
+  Future<dynamic> getRestaurantDetailData(String id, bool isFavourite) async {
     try {
+     
       _state = ResultState.DetailLoading;
-      final restaurantsResult = await apiService.loadRestaurantDetail(id);
+      final restaurantsResult =
+          await apiService.loadRestaurantDetail(id, isFavourite);
       notifyListeners();
       if (restaurantsResult.restaurant == null) {
         _state = ResultState.DetailNoData;

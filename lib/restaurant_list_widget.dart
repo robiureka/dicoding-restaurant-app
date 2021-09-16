@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_app_submission_1/provider/favourite_provider.dart';
 import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 import 'package:restaurant_app_submission_1/model/restaurant.dart';
 import 'package:restaurant_app_submission_1/restaurant_detail.dart';
+import 'package:restaurant_app_submission_1/utils/result_state.dart';
 import 'package:restaurant_app_submission_1/widgets/card_restaurant.dart';
 
 class RestaurantList extends StatefulWidget {
@@ -55,18 +57,21 @@ class _RestaurantListState extends State<RestaurantList> {
                         itemCount: _restaurantList!.length,
                         itemBuilder: (context, index) {
                           var restaurant = _restaurantList![index];
-                          return InkWell(
-                              onTap: () async {
-                                final restaurantDetail = await appState
-                                    .getRestaurantDetailData(restaurant.id!);
-                                print(restaurantDetail);
-                                Navigator.pushNamed(
-                                  context,
-                                  RestaurantDetailPage.routeName,
-                                  arguments: appState.restaurant,
-                                );
-                              },
-                              child: CardRestaurant(restaurant: restaurant));
+                          return Consumer<FavouriteProvider>(
+                            builder: (context, favState, _) => InkWell(
+                                onTap: () async {
+                                  await appState.getRestaurantDetailData(
+                                      restaurant.id!, restaurant.isFavourited!);
+                                  print(appState.restaurant);
+                                  print(restaurant.isFavourited);
+                                  Navigator.pushNamed(
+                                    context,
+                                    RestaurantDetailPage.routeName,
+                                    arguments: appState.restaurant!,
+                                  );
+                                },
+                                child: CardRestaurant(restaurant: restaurant)),
+                          );
                         },
                       ),
                     ),

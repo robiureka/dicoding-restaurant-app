@@ -3,8 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app_submission_1/delegates.dart';
 import 'package:restaurant_app_submission_1/model/restaurant.dart';
 import 'package:restaurant_app_submission_1/model/review.dart';
+import 'package:restaurant_app_submission_1/provider/favourite_provider.dart';
 import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 import 'package:restaurant_app_submission_1/common/styles.dart';
+import 'package:restaurant_app_submission_1/utils/result_state.dart';
+import 'package:restaurant_app_submission_1/widgets/restaurant_detail_custom_widget.dart'
+    as resDetail;
 
 class RestaurantDetailPage extends StatefulWidget {
   static final routeName = '/restaurant_detail';
@@ -70,14 +74,81 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                             )),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            child: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: Icon(Icons.arrow_back)),
-                            backgroundColor: primaryColor,
-                            foregroundColor: blackText,
+                          child: Consumer<FavouriteProvider>(
+                            builder: (context, favState, _) => Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CircleAvatar(
+                                  child: IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: Icon(Icons.arrow_back)),
+                                  backgroundColor: primaryColor,
+                                  foregroundColor: blackText,
+                                ),
+                                CircleAvatar(
+                                  child: IconButton(
+                                      onPressed: () async {
+                                        if (widget.restaurant.isFavourited ==
+                                            false) {
+                                          favState.setIsFavourite = true;
+                                          final restaurant = Restaurant(
+                                            id: widget.restaurant.id,
+                                            city: widget.restaurant.city,
+                                            rating: widget.restaurant.rating,
+                                            pictureId:
+                                                widget.restaurant.pictureId,
+                                            name: widget.restaurant.name,
+                                            isFavourited: favState.isFavourite,
+                                          );
+                                          print(favState.isFavourite!);
+                                          if (favState.isFavourite!) {
+                                            await favState
+                                                .insertFavouriteRestaurant(
+                                                    restaurant,
+                                                    favState.isFavourite!);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  "You Added Favourite Restaurant",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .subtitle1,
+                                                ),
+                                                backgroundColor: primaryColor,
+                                              ),
+                                            );
+                                            widget.restaurant.isFavourited =
+                                                true;
+                                          }
+                                        } else {
+                                          favState.deleteFavouriteRestaurant(
+                                              widget.restaurant.id!);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                              "You Removed Favourite Restaurant",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle1!.copyWith(color: whiteText),
+                                            ),
+                                            backgroundColor: secondaryColor,
+                                          ));
+                                          widget.restaurant.isFavourited =
+                                              false;
+                                        }
+                                      },
+                                      icon: widget.restaurant.isFavourited ==
+                                              false
+                                          ? Icon(Icons.favorite_outline)
+                                          : Icon(Icons.favorite)),
+                                  backgroundColor: primaryColor,
+                                  foregroundColor: secondaryColor,
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -95,15 +166,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                           Flexible(
                               fit: FlexFit.loose,
                               flex: 3,
-                              child: _buildHeader(context, widget.restaurant)),
+                              child: resDetail.BuildRestaurantDetailHeader(
+                                  context: context,
+                                  restaurant: widget.restaurant)),
                           SizedBox(
                             height: 20.0,
                           ),
                           Flexible(
                               flex: 5,
                               fit: FlexFit.tight,
-                              child: _buildDescription(
-                                  context, widget.restaurant)),
+                              child: resDetail.BuildRestaurantDetailDescription(
+                                  context: context,
+                                  restaurant: widget.restaurant)),
                           SizedBox(
                             height: 15.0,
                           ),
@@ -165,10 +239,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                                 'Add Review',
                                                 textAlign: TextAlign.center,
                                               ),
-                                              content: _buildAddReviewDialog(
-                                                  context,
-                                                  widget.restaurant,
-                                                  _formKey),
+                                              content:
+                                                  resDetail.AddReviewDialog(
+                                                      context: context,
+                                                      restaurant:
+                                                          widget.restaurant,
+                                                      formKey: _formKey),
                                             ));
                                   },
                                   child: Text('Add Review'),
@@ -186,8 +262,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               color: primaryColor,
                             ),
                             Flexible(
-                                flex: 4,
-                                child: _buildReviewItem(context, _reviewList))
+                              flex: 4,
+                              child: resDetail.BuildReviewListItems(
+                                context: context,
+                                reviews: _reviewList,
+                              ),
+                            )
                           ],
                         ),
                       )),
@@ -199,57 +279,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       ),
     );
   }
-}
-
-Widget _buildHeader(BuildContext context, Restaurant restaurant) {
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    mainAxisAlignment: MainAxisAlignment.start,
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Text(
-        restaurant.name!,
-        style: Theme.of(context).textTheme.headline5!,
-      ),
-      SizedBox(
-        height: 7.0,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            restaurant.city!,
-            style: Theme.of(context).textTheme.headline6!,
-          ),
-          Row(
-            children: [
-              Icon(
-                Icons.star,
-                color: primaryColor,
-              ),
-              SizedBox(
-                width: 8.0,
-              ),
-              Text(restaurant.rating!,
-                  style: Theme.of(context).textTheme.headline6)
-            ],
-          ),
-        ],
-      ),
-      SizedBox(
-        height: 7.0,
-      ),
-      Text(
-        restaurant.address!,
-        style: Theme.of(context).textTheme.headline6!,
-      ),
-    ],
-  );
-}
-
-Widget _buildDescription(BuildContext context, Restaurant restaurant) {
-  return Text(restaurant.description!,
-      style: Theme.of(context).textTheme.bodyText2);
 }
 
 SliverPersistentHeader _header(BuildContext context, String text) {
@@ -271,96 +300,4 @@ SliverPersistentHeader _header(BuildContext context, String text) {
         )),
     pinned: true,
   );
-}
-
-Widget _buildReviewItem(BuildContext context, List<Review> reviews) {
-  return ListView.builder(
-      itemCount: reviews.length,
-      itemBuilder: (context, index) {
-        var review = reviews[index];
-        return Container(
-          height: 80,
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(review.name!),
-                  Text(review.date!),
-                ],
-              ),
-              Text(review.review!),
-              Divider(
-                height: 5.0,
-                thickness: 2.0,
-                color: primaryColor,
-              ),
-            ],
-          ),
-        );
-      });
-}
-
-Widget _buildAddReviewDialog(
-    BuildContext context, Restaurant restaurant, GlobalKey<FormState> formKey) {
-  return Consumer<RestaurantProvider>(builder: (context, appState, _) {
-    return Form(
-      key: formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextFormField(
-            validator: (String? value) {
-              if (value == '' || value!.isEmpty) {
-                return 'Please insert your name';
-              }
-            },
-            cursorColor: secondaryColor,
-            decoration: InputDecoration(
-              hintText: 'Name',
-              border: InputBorder.none,
-            ),
-            onChanged: (String value) {
-              appState.setName = value;
-            },
-          ),
-          TextFormField(
-            validator: (String? value) {
-              if (value == '' || value!.isEmpty) {
-                return 'Please insert your review';
-              }
-            },
-            decoration: InputDecoration(
-              hintText: 'Review',
-              border: InputBorder.none,
-            ),
-            onChanged: (String value) {
-              appState.setReview = value;
-            },
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          ElevatedButton(
-            child: Text('Confirm'),
-            style: ElevatedButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.button,
-              primary: secondaryColor,
-            ),
-            onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                await appState.submitReview(restaurant.id!);
-                await appState.getRestaurantDetailData(restaurant.id!);
-                Navigator.pop(context);
-              }
-            },
-          )
-        ],
-      ),
-    );
-  });
 }

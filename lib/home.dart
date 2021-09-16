@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_app_submission_1/favourite_restaurant_list.dart';
 import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 import 'package:restaurant_app_submission_1/restaurant_list_widget.dart';
 import 'package:restaurant_app_submission_1/utils/debounce.dart';
@@ -42,6 +43,15 @@ class Home extends StatelessWidget {
                           children: [
                             Flexible(
                               flex: 5,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context,
+                                        FavouriteRestaurantList.routeName);
+                                  },
+                                  child: Text('Favourite Restaurant')),
+                            ),
+                            Flexible(
+                              flex: 5,
                               child: Text(
                                 'Restaurants',
                                 style: Theme.of(context).textTheme.headline4,
@@ -49,9 +59,14 @@ class Home extends StatelessWidget {
                             ),
                             Flexible(
                               flex: 5,
-                              child: Text(
-                                'Recommendation Restaurant For You',
-                                style: Theme.of(context).textTheme.headline6,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Recommendation Restaurant For You',
+                                    style:
+                                        Theme.of(context).textTheme.headline6,
+                                  ),
+                                ],
                               ),
                             ),
                           ]),
