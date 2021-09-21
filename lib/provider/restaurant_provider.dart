@@ -8,7 +8,6 @@ import 'package:restaurant_app_submission_1/model/review.dart';
 import 'package:restaurant_app_submission_1/service/api_service.dart';
 import 'package:restaurant_app_submission_1/service/sqlite_service.dart';
 import 'package:restaurant_app_submission_1/utils/result_state.dart';
-import 'package:sqflite/sqflite.dart';
 
 class RestaurantProvider extends ChangeNotifier {
   final Connectivity _connectivity = new Connectivity();
@@ -39,6 +38,10 @@ class RestaurantProvider extends ChangeNotifier {
   List<Restaurant> get restaurantsList => _restaurantsList;
   List<Review> _reviewList = [];
   List<Review> get reviewList => _reviewList;
+  set setReviewList(List<Review> review) {
+    _reviewList = review;
+    notifyListeners();
+  }
 
   connectivityMonitoring() async {
     await initConnections();
@@ -49,14 +52,14 @@ class RestaurantProvider extends ChangeNotifier {
       } else {
         await _updateConnectivityStatus().then((bool isConnected) {
           _isOnline = isConnected;
-          _getAllRestaurantData();
+          getAllRestaurantData();
           notifyListeners();
         });
       }
     });
   }
 
-  Future<dynamic> _getAllRestaurantData() async {
+  Future<dynamic> getAllRestaurantData() async {
     try {
       _state = ResultState.Loading;
       final restaurants = await apiService.loadRestaurant();
@@ -79,10 +82,8 @@ class RestaurantProvider extends ChangeNotifier {
 
   Future<dynamic> getRestaurantDetailData(String id, bool isFavourite) async {
     try {
-     
       _state = ResultState.DetailLoading;
-      final restaurantsResult =
-          await apiService.loadRestaurantDetail(id, isFavourite);
+      final restaurantsResult = await apiService.loadRestaurantDetail(id);
       notifyListeners();
       if (restaurantsResult.restaurant == null) {
         _state = ResultState.DetailNoData;

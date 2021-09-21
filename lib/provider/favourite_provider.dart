@@ -3,7 +3,6 @@ import 'package:restaurant_app_submission_1/model/restaurant.dart';
 import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 import 'package:restaurant_app_submission_1/service/api_service.dart';
 import 'package:restaurant_app_submission_1/service/sqlite_service.dart';
-import 'package:restaurant_app_submission_1/utils/result_state.dart';
 
 class FavouriteProvider extends ChangeNotifier {
   List<Restaurant> _favouriteRestaurantList = [];

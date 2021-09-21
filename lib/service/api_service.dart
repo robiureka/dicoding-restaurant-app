@@ -19,7 +19,7 @@ class ApiService {
     }
   }
 
-  Future<RestaurantResult> loadRestaurantDetail(String id, bool isFavourite) async {
+  Future<RestaurantResult> loadRestaurantDetail(String id) async {
     final response = await http.get(Uri.parse("$_baseUrl/detail/$id"));
     final isFavourite = await getIsFavouriteFromSqlite(id);
     if (response.statusCode == 200) {

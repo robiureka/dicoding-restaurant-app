@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app_submission_1/home.dart';
+import 'package:restaurant_app_submission_1/main_page.dart';
 import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 import 'package:restaurant_app_submission_1/widgets/no_internet.dart';
 
@@ -29,7 +29,7 @@ Provider.of<RestaurantProvider>(context, listen: false)
     return SafeArea(
       child: Consumer<RestaurantProvider>(builder: (context, appState, _) {
         if (appState.isOnline != null) {
-          return appState.isOnline! ? Home() : NoInterent();
+          return appState.isOnline! ? MainPage() : NoInterent();
         }
         return Center(
           child: CircularProgressIndicator(),

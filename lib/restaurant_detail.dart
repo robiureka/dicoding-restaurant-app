@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app_submission_1/delegates.dart';
 import 'package:restaurant_app_submission_1/model/restaurant.dart';
-import 'package:restaurant_app_submission_1/model/review.dart';
 import 'package:restaurant_app_submission_1/provider/favourite_provider.dart';
 import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 import 'package:restaurant_app_submission_1/common/styles.dart';
@@ -21,7 +20,6 @@ class RestaurantDetailPage extends StatefulWidget {
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
-  List<Review> _reviewList = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
@@ -30,8 +28,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    _reviewList =
-        Provider.of<RestaurantProvider>(context, listen: true).reviewList;
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -132,7 +128,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                               "You Removed Favourite Restaurant",
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .subtitle1!.copyWith(color: whiteText),
+                                                  .subtitle1!
+                                                  .copyWith(color: whiteText),
                                             ),
                                             backgroundColor: secondaryColor,
                                           ));
@@ -265,9 +262,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               flex: 4,
                               child: resDetail.BuildReviewListItems(
                                 context: context,
-                                reviews: _reviewList,
+                                reviews: appState.reviewList,
                               ),
-                            )
+                            ),
                           ],
                         ),
                       )),

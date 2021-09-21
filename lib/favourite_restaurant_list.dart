@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app_submission_1/provider/favourite_provider.dart';
-import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 import 'package:restaurant_app_submission_1/model/restaurant.dart';
 import 'package:restaurant_app_submission_1/restaurant_detail.dart';
 import 'package:restaurant_app_submission_1/widgets/card_restaurant.dart';
@@ -45,7 +44,7 @@ class _FavouriteRestaurantListState extends State<FavouriteRestaurantList> {
                           itemCount: _favouriterestaurantList!.length,
                           itemBuilder: (context, index) {
                             var restaurant = _favouriterestaurantList![index];
-                            Restaurant? restaurantDetail;
+                            dynamic restaurantDetail;
                             print(_favouriterestaurantList);
                             print(_favouriterestaurantList![0].isFavourited);
                             return InkWell(
@@ -54,7 +53,7 @@ class _FavouriteRestaurantListState extends State<FavouriteRestaurantList> {
                                       .getRestaurantDetailFromFavourite(
                                           restaurant.id!,
                                           restaurant.isFavourited!);
-
+                                  print(restaurantDetail);
                                   print(restaurantDetail!.isFavourited);
                                   Navigator.pushNamed(
                                     context,

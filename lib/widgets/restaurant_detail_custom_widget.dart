@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app_submission_1/common/styles.dart';
-import 'package:restaurant_app_submission_1/delegates.dart';
 import 'package:restaurant_app_submission_1/model/restaurant.dart';
 import 'package:restaurant_app_submission_1/model/review.dart';
-import 'package:restaurant_app_submission_1/provider/favourite_provider.dart';
 import 'package:restaurant_app_submission_1/provider/restaurant_provider.dart';
 
 class BuildRestaurantDetailHeader extends StatelessWidget {
@@ -75,8 +73,6 @@ class BuildRestaurantDetailDescription extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyText2);
   }
 }
-
-
 
 class BuildReviewListItems extends StatelessWidget {
   final BuildContext context;
@@ -177,7 +173,6 @@ class AddReviewDialog extends StatelessWidget {
                 primary: secondaryColor,
               ),
               onPressed: () async {
-                final isFavourite = Provider.of<FavouriteProvider>(context, listen: false).isFavourite!;
                 if (formKey.currentState!.validate()) {
                   await appState.submitReview(restaurant.id!);
                   await appState.getRestaurantDetailData(restaurant.id!, restaurant.isFavourited!);

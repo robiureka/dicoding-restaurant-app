@@ -64,8 +64,8 @@ class _RestaurantListState extends State<RestaurantList> {
                                       restaurant.id!, restaurant.isFavourited!);
                                   print(appState.restaurant);
                                   print(restaurant.isFavourited);
-                                  Navigator.pushNamed(
-                                    context,
+                                 Navigator.pushNamed(
+                                   context,
                                     RestaurantDetailPage.routeName,
                                     arguments: appState.restaurant!,
                                   );

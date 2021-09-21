@@ -1,3 +1,5 @@
+
+
 class Review {
   String? name, review, date;
 
@@ -9,5 +11,13 @@ class Review {
       name: json['name'],
       review: json['review'],
     );
+  }
+
+  Map<String,dynamic> toJson(){
+    return{
+      'date': date,
+      'name': name,
+      'review': review,
+    };
   }
 }
