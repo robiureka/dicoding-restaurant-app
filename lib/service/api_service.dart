@@ -10,7 +10,7 @@ class ApiService {
   static final String _baseUrl = 'https://restaurant-api.dicoding.dev';
   static final String _category = '/list';
   final SQLiteService sqLiteService = SQLiteService();
-  Future<RestaurantResult> loadRestaurant() async {
+  Future<RestaurantResult>? loadRestaurant() async {
     final response = await http.get(Uri.parse(_baseUrl + _category));
     if (response.statusCode == 200) {
       return RestaurantResult.fromJson(json.decode(response.body));
@@ -19,18 +19,18 @@ class ApiService {
     }
   }
 
-  Future<RestaurantResult> loadRestaurantDetail(String id) async {
+  Future<RestaurantResult>? loadRestaurantDetail(String id) async {
     final response = await http.get(Uri.parse("$_baseUrl/detail/$id"));
     final isFavourite = await getIsFavouriteFromSqlite(id);
     if (response.statusCode == 200) {
       return RestaurantResult.detailFromJson(
-          json.decode(response.body), isFavourite);
+          json.decode(response.body), isFavourite!);
     } else {
       throw Exception("The Restaurant Detail Data Can't be loaded");
     }
   }
 
-  Future<bool> getIsFavouriteFromSqlite(String id) async {
+  Future<bool>? getIsFavouriteFromSqlite(String id) async {
     final Database db = await sqLiteService.database;
     bool? isFavourite;
     final List<Map<String, dynamic>> restaurantData = await db
@@ -47,7 +47,7 @@ class ApiService {
     return isFavourite;
   }
 
-  Future<RestaurantResult> searchRestaurant(String filter) async {
+  Future<RestaurantResult>? searchRestaurant(String filter) async {
     final response = await http.get(Uri.parse("$_baseUrl/search?q=$filter"));
     if (response.statusCode == 200) {
       return RestaurantResult.fromJson(json.decode(response.body));

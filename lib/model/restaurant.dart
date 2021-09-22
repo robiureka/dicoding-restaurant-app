@@ -26,6 +26,7 @@ class Restaurant {
       id: restaurant["id"],
       name: restaurant["name"],
       pictureId: restaurant["pictureId"],
+      description: restaurant["description"],
       city: restaurant["city"],
       rating: restaurant["rating"].toString(),
       isFavourited: restaurant["isFavourite"] == 1 ? true : false,
