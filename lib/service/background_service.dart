@@ -30,7 +30,7 @@ class BackgroundService {
 
   static Future<int> getRandomRestaurantIndex() async {
     var result = await ApiService().loadRestaurant();
-    var dataCount = result.count;
+    var dataCount = result!.count;
     Random random = new Random();
     int randomNumber = random.nextInt(dataCount!);
     return randomNumber;
@@ -42,9 +42,9 @@ class BackgroundService {
     var dataList = await ApiService().loadRestaurant();
     var randomNumber = await getRandomRestaurantIndex();
     var data = await ApiService().loadRestaurantDetail(
-        dataList.restaurantsData![randomNumber].id!);
+        dataList!.restaurantsData![randomNumber].id!);
         
-    await notificationService.showNotification(flnp, data);
+    await notificationService.showNotification(flnp, data!);
     _uiSendPort ??= IsolateNameServer.lookupPortByName(_isolateName);
     _uiSendPort?.send(null);
   }

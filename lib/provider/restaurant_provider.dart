@@ -19,7 +19,9 @@ class RestaurantProvider extends ChangeNotifier {
   Restaurant? _restaurant;
   bool? _isOnline;
 
-  RestaurantProvider({required this.apiService});
+  RestaurantProvider({required this.apiService}){
+    getAllRestaurantData();
+  }
 
   RestaurantResult? get result => _restaurantsResult;
   ResultState? get state => _state;
@@ -64,7 +66,7 @@ class RestaurantProvider extends ChangeNotifier {
       _state = ResultState.Loading;
       final restaurants = await apiService.loadRestaurant();
       notifyListeners();
-      if (restaurants.restaurantsData!.isEmpty) {
+      if (restaurants!.restaurantsData!.isEmpty) {
         _state = ResultState.NoData;
         notifyListeners();
         return _message = "No Restaurant Data";
@@ -85,7 +87,7 @@ class RestaurantProvider extends ChangeNotifier {
       _state = ResultState.DetailLoading;
       final restaurantsResult = await apiService.loadRestaurantDetail(id);
       notifyListeners();
-      if (restaurantsResult.restaurant == null) {
+      if (restaurantsResult!.restaurant == null) {
         _state = ResultState.DetailNoData;
         notifyListeners();
         return _message = "No Restaurant Data";
@@ -107,7 +109,7 @@ class RestaurantProvider extends ChangeNotifier {
       _state = ResultState.Loading;
       final restaurantsResult = await apiService.searchRestaurant(filter);
       notifyListeners();
-      if (restaurantsResult.restaurantsData == null) {
+      if (restaurantsResult!.restaurantsData == null) {
         _state = ResultState.NoData;
         notifyListeners();
         return _message = "No Restaurant Data";
